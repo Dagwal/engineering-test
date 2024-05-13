@@ -16,7 +16,6 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { uuid } from 'uuidv4';
 import { FlakeyApiInterceptor } from '../../../flakey-api.interceptor';
 import {
   AllBookingResponseContract,
@@ -36,46 +35,23 @@ export class BookingController {
   @Get()
   @UseInterceptors(new FlakeyApiInterceptor(0.9))
   async findAll(): Promise<AllBookingResponseContract> {
-    const bookings = await this.bookingService.findAllBookings();
-
-    return {
-      data: bookings.map((booking) => ({
-        id: booking.id,
-        user: booking.user,
-        parc: booking.parc,
-        bookingdate: booking.bookingdate,
-        comments: booking.comments,
-      })),
-    };
+    return await this.bookingService.findAllBookingsAndFormat();
   }
 
   @ApiCreatedResponse({ type: AllBookingResponseContract })
   @ApiBadRequestResponse()
   @Post()
-  async create(
-    @Body() payload
-  ): Promise<BookingResponseDto> {
-    // create new booking
-    const booking = await this.bookingService.newBooking({
-      ...payload,
-      id: uuid()
-    } as BookingModel);
-
-    return booking;
+  async create(@Body() book: BookingRequestContract): Promise<BookingResponseDto> {
+    return await this.bookingService.newBooking(book);
   }
+
 
   @Get(':id')
   @ApiOkResponse({ type: BookingResponseDto })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   async getBooking(@Param('id') id: string): Promise<BookingResponseDto> {
-    const booking = await this.bookingService.getBookingById(id);
-
-    if (!booking) {
-      throw new NotFoundException('Booking not found');
-    }
-
-    return booking;
+    return await this.bookingService.getBookingById(id);
   }
 
   @Delete(':id')
@@ -83,6 +59,5 @@ export class BookingController {
   @ApiNoContentResponse()
   async remove(@Param('id') id: string): Promise<void> {
     await this.bookingService.removeBooking(id);
-    return;
   }
 }

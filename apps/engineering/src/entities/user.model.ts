@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { BookingModel } from './booking.model';
 
 export interface User {
@@ -9,7 +9,7 @@ export interface User {
 
 @Entity({ name: 'users'})
 export class UserModel implements User {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn('uuid')
   id!: string;
 
   @Column()

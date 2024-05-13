@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { BookingModel } from './booking.model';
 
 export interface Parc {
@@ -8,16 +8,16 @@ export interface Parc {
 }
 
 @Entity({ name: 'parcs' })
-export class ParcModel implements Parc {
-  @PrimaryColumn()
-  id!: string;
+export class ParcModel  {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
-  name!: string;
+  name: string;
 
   @Column()
-  description!: string;
+  description: string;
 
   @OneToMany(() => BookingModel, booking => booking.parc)
-  bookings!: BookingModel[];
+  bookings?: BookingModel[];
 }

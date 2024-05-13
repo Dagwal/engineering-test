@@ -4,7 +4,7 @@ import { BookingModel } from "../../entities/booking.model";
 define(BookingModel, (faker) => {
   const booking = new BookingModel;
 
-  booking.id = faker.random.uuid();
+  // booking.id = faker.random.uuid();
   booking.user = faker.random.uuid();
   booking.parc = faker.random.uuid();
   booking.bookingdate = faker.date.past().toISOString();

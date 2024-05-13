@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ParcModel } from '../../../entities/parc.model';
+import { v4 as uuidv4 } from 'uuid';
+import { AllParcResponseContract, ParcRequestContract } from '../dto/parc.contracts';
 
 @Injectable()
 export class ParcService {
@@ -10,19 +12,39 @@ export class ParcService {
     private readonly parcRepository: Repository<ParcModel>,
   ) {}
 
-  async findAll(): Promise<ParcModel[]> {
-    return await this.parcRepository.find();
+  async findAllAndFormat(): Promise<AllParcResponseContract> {
+    const parcs = await this.parcRepository.find();
+    const formattedParcs = parcs.map((parc) => ({
+      id: parc.id,
+      name: parc.name,
+      description: parc.description,
+    }));
+
+    return { data: formattedParcs };
   }
 
   async getById(id: string): Promise<ParcModel> {
-    return await this.parcRepository.createQueryBuilder().select().where('id = :id', {id}).getOne();
+    const parc = await this.parcRepository.findOne({where: {id}});
+    if (!parc) {
+      throw new NotFoundException('Parc not found');
+    }
+    return parc;
   }
 
-  async newUser(user: ParcModel): Promise<ParcModel> {
-    return await this.parcRepository.save(user);
+  async createParc(payload: ParcRequestContract): Promise<ParcModel> {
+    try {
+      const newParc = this.parcRepository.create(payload);
+      await this.parcRepository.save(newParc);
+      return newParc;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
-  async remove(id: string): Promise<void> {
-    await this.parcRepository.delete(id);
+  async removeParc(id: string): Promise<void> {
+    const result = await this.parcRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException('Parc not found');
+    }
   }
 }

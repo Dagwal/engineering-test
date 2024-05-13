@@ -4,8 +4,8 @@ import { BookingModel } from './booking.model';
 
 @Entity({ name: 'comments' })
 export class CommentModel {
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
 
   @Column()
   commentText!: string;

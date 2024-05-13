@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, Column, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Parc, ParcModel } from './parc.model';
 import { UserModel } from './user.model';
 import { CommentModel } from './comment.model';
@@ -13,18 +13,18 @@ export interface Booking {
 
 @Entity({ name: 'bookings' })
 export class BookingModel implements Booking{
-  @PrimaryColumn()
-  id!: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ManyToOne(() => UserModel, user => user.bookings)
-  user!: UserModel;
+  user: UserModel;
 
   @ManyToOne(() => ParcModel, parc => parc.bookings)
-  parc!: ParcModel;
+  parc: ParcModel;
 
   @Column()
-  bookingdate!: string;
+  bookingdate: string;
 
   @OneToMany(() => CommentModel, comment => comment.booking)
-  comments!: CommentModel[];
+  comments: CommentModel[];
 }

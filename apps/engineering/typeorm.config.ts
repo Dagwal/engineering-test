@@ -1,8 +1,7 @@
 import { TypeOrmModuleOptions } from "@nestjs/typeorm"
-import { BookingModel } from "./src/entities/booking/booking.model";
-import { ParcModel } from "./src/entities/parc/parc.model";
-import { UserModel } from "./src/entities/user/user.model";
-
+import { BookingModel } from "./src/entities/booking.model";
+import { ParcModel } from "./src/entities/parc.model";
+import { UserModel } from './src/entities/user.model'
 export const ConfigOptions: TypeOrmModuleOptions = {
   type: 'postgres',
   host: process.env.DB_HOST || 'sheez-db',

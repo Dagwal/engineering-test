@@ -31,14 +31,14 @@ export class AllBookingResponseContract {
 
 export class BookingRequestContract {
   @ApiProperty()
-  user: string;
+  user: UserModel;
 
   @ApiProperty()
-  parc: string;
+  parc: ParcModel;
 
   @ApiProperty()
   bookingdate: string;
 
   @ApiProperty()
-  comments?: string;
+  comments?: CommentModel[];
 }
