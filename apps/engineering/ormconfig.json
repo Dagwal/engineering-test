@@ -1,0 +1,12 @@
+{
+  "type": "postgres",
+  "host": "localhost",
+  "port": 5432,
+  "username": "postgres",
+  "password": "postgres",
+  "database": "sheez_api",
+  "factories": ["./src/database/factories/*.factory.ts"],
+  "seeds": ["./src/database/seeds/*.seed.ts"],
+  "entities": ["./src/entities/**/*.model.ts"],
+  "synchronize": true
+}

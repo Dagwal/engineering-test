@@ -1,0 +1,11 @@
+FROM node:lts-gallium
+
+RUN apt-get update -y && npm install -g nx && npm install -g @nrwl/cli
+
+COPY --chown=node:node . /usr/src/app
+
+WORKDIR /usr/src/app
+RUN rm -rf node_modules
+RUN npm install --force --loglevel verbose
+
+CMD ["sh", "-c", "npm run start:api"]

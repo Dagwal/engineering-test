@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "projects": {
+    "api": "apps/engineering",
+    "shared-server": "libs/server"
+  }
+}

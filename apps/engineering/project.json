@@ -1,0 +1,97 @@
+{
+  "name": "engineering",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/engineering/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/engineering",
+        "main": "apps/engineering/src/main.ts",
+        "tsConfig": "apps/engineering/tsconfig.app.json",
+        "isolatedConfig": true,
+        "webpackConfig": "apps/engineering/webpack.config.js"
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/js:node",
+      "options": {
+        "buildTarget": "engineering:build"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "engineering:build:production"
+        }
+      }
+    },
+    "build-migration-config": {
+      "executor": "@nrwl/node:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/typeorm-migration",
+        "main": "apps/engineering/typeorm.config.ts",
+        "tsConfig": "apps/engineering/tsconfig.app.json"
+      }
+    },
+    "typeorm-generate-migrations": {
+      "executor": "@nrwl/workspace:run-commands",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "cwd": "apps/engineering",
+        "commands": ["typeorm -d ../../dist/apps/typeorm-migration/main.js migration:generate"]
+      },
+      "dependsOn": ["build-migration-config"]
+    },
+    "typeorm-run-migrations": {
+      "executor": "@nrwl/workspace:run-commands",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "cwd": "apps/engineering",
+        "commands": ["typeorm -d ../../dist/apps/typeorm-migration/main.js migration:run"]
+      },
+      "dependsOn": ["build-migration-config"]
+    },
+    "seedrun": {
+      "executor": "@nrwl/workspace:run-commands",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "cwd": "apps/engineering",
+        "commands": ["ts-node --project ./tsconfig.seed.json ../../node_modules/typeorm-seeding/dist/cli.js seed -n ./ormconfig.json"]
+      },
+      "dependsOn": ["build"]
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/engineering/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/engineering/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    }
+  },
+  "tags": []
+}

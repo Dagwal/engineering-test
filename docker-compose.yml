@@ -1,0 +1,39 @@
+version: '3'
+services:
+  sheez-db:
+    image: postgres:14-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: sheez_api
+    ports:
+      - 5433:5432
+    volumes:
+      - ./sheez-data:/var/lib/postgresql/data
+
+  # sheez-redis:
+  #   image: redis:6.2.5-alpine
+  #   restart: unless-stopped
+  #   ports:
+  #     - 6379:6379
+  #   volumes:
+  #     - ./sheez-redis-data:/data
+
+  sheez-api:
+    build:
+      context: .
+      dockerfile: './apps/engineering/Dockerfile.dev'
+    links:
+      - sheez-db
+    environment:
+      - DB_HOST=sheez-db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=sheez_api
+
+    ports:
+      - 3001:8080
+    depends_on:
+      - sheez-db

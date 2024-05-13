@@ -1,0 +1,11 @@
+.dockerignore
+postgres-data
+redis-data
+npm-debug.log
+Dockerfile
+Dockerfile.dev.postgres
+.git
+.gitignore
+.github
+.lsp
+.vscode
